@@ -1,0 +1,205 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Global Helpers ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    // --- Validation Helpers ---
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128 &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120 &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 256)) &&
+             (!('photoUrl' in data) || (data.photoUrl is string && data.photoUrl.size() <= 600)) &&
+             (!('preferredLanguage' in data) || (data.preferredLanguage is string && data.preferredLanguage.size() <= 32)) &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidMemoryItem(data) {
+      return data.memoryKey is string && data.memoryKey.size() >= 1 && data.memoryKey.size() <= 120 &&
+             data.memoryValue is string && data.memoryValue.size() >= 1 && data.memoryValue.size() <= 2000 &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidNoteItem(data) {
+      return data.title is string && data.title.size() >= 1 && data.title.size() <= 160 &&
+             data.content is string && data.content.size() >= 1 && data.content.size() <= 10000 &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidExpenseItem(data) {
+      return (data.amount is int || data.amount is float) && data.amount > 0 && data.amount <= 1000000000 &&
+             data.currency is string && data.currency.size() >= 1 && data.currency.size() <= 12 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 80 &&
+             data.description is string && data.description.size() <= 500 &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidTodoItem(data) {
+      return data.title is string && data.title.size() >= 1 && data.title.size() <= 240 &&
+             data.listType in ['TODO', 'SHOPPING'] &&
+             data.isDone is bool &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidRoutineItem(data) {
+      return data.name is string && data.name.size() >= 1 && data.name.size() <= 140 &&
+             data.triggerType in ['VOICE', 'TIME', 'CHARGING', 'WIFI', 'APP_OPENED'] &&
+             data.triggerValue is string && data.triggerValue.size() <= 140 &&
+             data.steps is list && data.steps.size() >= 1 && data.steps.size() <= 20 &&
+             (data.steps[0] is string && data.steps[0].size() <= 300) &&
+             data.isEnabled is bool &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    // --- Collection Rules ---
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().uid == request.auth.uid &&
+                       incoming().keys().hasAll(['uid', 'displayName', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['uid', 'displayName', 'email', 'photoUrl', 'preferredLanguage', 'createdAt', 'updatedAt']) &&
+                       isValidUserProfile(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidUserProfile(incoming()) &&
+                       incoming().uid == existing().uid &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'email', 'photoUrl', 'preferredLanguage', 'updatedAt']);
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      match /memories/{memoryId} {
+        allow get: if isOwner(userId) && isValidId(memoryId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(memoryId) &&
+                         incoming().keys().hasAll(['memoryKey', 'memoryValue', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['memoryKey', 'memoryValue', 'createdAt', 'updatedAt']) &&
+                         isValidMemoryItem(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(memoryId) &&
+                         isValidMemoryItem(incoming()) &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['memoryKey', 'memoryValue', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(memoryId);
+      }
+
+      match /notes/{noteId} {
+        allow get: if isOwner(userId) && isValidId(noteId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(noteId) &&
+                         incoming().keys().hasAll(['title', 'content', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['title', 'content', 'createdAt', 'updatedAt']) &&
+                         isValidNoteItem(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(noteId) &&
+                         isValidNoteItem(incoming()) &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(noteId);
+      }
+
+      match /expenses/{expenseId} {
+        allow get: if isOwner(userId) && isValidId(expenseId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(expenseId) &&
+                         incoming().keys().hasAll(['amount', 'currency', 'category', 'description', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['amount', 'currency', 'category', 'description', 'createdAt', 'updatedAt']) &&
+                         isValidExpenseItem(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(expenseId) &&
+                         isValidExpenseItem(incoming()) &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['amount', 'currency', 'category', 'description', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(expenseId);
+      }
+
+      match /todos/{todoId} {
+        allow get: if isOwner(userId) && isValidId(todoId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(todoId) &&
+                         incoming().keys().hasAll(['title', 'listType', 'isDone', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['title', 'listType', 'isDone', 'createdAt', 'updatedAt']) &&
+                         isValidTodoItem(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(todoId) &&
+                         isValidTodoItem(incoming()) &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'listType', 'isDone', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(todoId);
+      }
+
+      match /routines/{routineId} {
+        allow get: if isOwner(userId) && isValidId(routineId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(routineId) &&
+                         incoming().keys().hasAll(['name', 'triggerType', 'triggerValue', 'steps', 'isEnabled', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['name', 'triggerType', 'triggerValue', 'steps', 'isEnabled', 'createdAt', 'updatedAt']) &&
+                         isValidRoutineItem(incoming());
+
+        allow update: if isOwner(userId) &&
+                         isValidId(routineId) &&
+                         isValidRoutineItem(incoming()) &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['name', 'triggerType', 'triggerValue', 'steps', 'isEnabled', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(routineId);
+      }
+    }
+  }
+}

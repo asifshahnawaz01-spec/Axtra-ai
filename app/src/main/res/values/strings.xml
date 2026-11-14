@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Axtra AI</string>
+    <string name="app_tagline">Your Personal AI Companion</string>
+    <string name="accessibility_service_description">Axtra AI uses Accessibility only when you issue a command or enable Screen Assistant to read on-screen text and automate multi-step actions on your behalf.</string>
+    <string name="notification_listener_label">Axtra AI Notification Reader</string>
+    <string name="widget_description">Quick voice trigger and Always On status for Axtra AI</string>
+    <string name="widget_mic_desc">Tap to talk to Axtra AI</string>
+    <string name="widget_status_idle">Tap mic to speak</string>
+    <string name="widget_status_active">Always On Active</string>
+    <string name="shortcut_talk_short">Talk to Axtra</string>
+    <string name="shortcut_talk_long">Start listening with Axtra AI</string>
+    <string name="shortcut_always_on_short">Always On</string>
+    <string name="shortcut_always_on_long">Toggle Axtra Always On mode</string>
+    <string name="tile_label">Axtra</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_commands">Commands</string>
+    <string name="nav_routines">Routines</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+    <string name="error_no_internet">No internet connection. Switched to offline command mode.</string>
+    <string name="error_quota_exceeded">Gemini free quota reached. Retrying shortly or using offline mode.</string>
+    <string name="error_invalid_key">Firebase AI verification failed. Test Gemini AI in Settings &gt; AI.</string>
+    <string name="error_tts_missing">Urdu voice pack is missing. Tap to install Urdu TTS data.</string>
+    <string name="error_mic_busy">Microphone is busy in another app. Close it and try again.</string>
+</resources>

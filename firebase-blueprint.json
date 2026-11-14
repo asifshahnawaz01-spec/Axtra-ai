@@ -1,0 +1,111 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated Axtra AI user profile and cloud preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID matching document ID" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "email": { "type": "string", "description": "User email address" },
+        "photoUrl": { "type": "string", "description": "Optional avatar URL" },
+        "preferredLanguage": { "type": "string", "description": "AUTO, URDU_ONLY, or ENGLISH_ONLY" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on creation (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on update (FieldValue.serverTimestamp())" }
+      },
+      "required": ["uid", "displayName", "createdAt", "updatedAt"]
+    },
+    "MemoryItem": {
+      "title": "MemoryItem",
+      "description": "Long-term personal fact saved by the user for Axtra AI",
+      "type": "object",
+      "properties": {
+        "memoryKey": { "type": "string", "description": "Fact label or category" },
+        "memoryValue": { "type": "string", "description": "Fact value" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" }
+      },
+      "required": ["memoryKey", "memoryValue", "createdAt", "updatedAt"]
+    },
+    "NoteItem": {
+      "title": "NoteItem",
+      "description": "Voice or text note synced to the cloud",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Note title" },
+        "content": { "type": "string", "description": "Note body" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" }
+      },
+      "required": ["title", "content", "createdAt", "updatedAt"]
+    },
+    "ExpenseItem": {
+      "title": "ExpenseItem",
+      "description": "Personal expense log entry",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number", "description": "Expense amount (> 0)" },
+        "currency": { "type": "string", "description": "Currency code such as PKR or USD" },
+        "category": { "type": "string", "description": "Expense category" },
+        "description": { "type": "string", "description": "Expense note" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" }
+      },
+      "required": ["amount", "currency", "category", "description", "createdAt", "updatedAt"]
+    },
+    "TodoItem": {
+      "title": "TodoItem",
+      "description": "Todo or shopping list entry",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Task or item title" },
+        "listType": { "type": "string", "enum": ["TODO", "SHOPPING"], "description": "List category" },
+        "isDone": { "type": "boolean", "description": "Completion state" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" }
+      },
+      "required": ["title", "listType", "isDone", "createdAt", "updatedAt"]
+    },
+    "RoutineItem": {
+      "title": "RoutineItem",
+      "description": "User automation routine synced to cloud",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Routine name" },
+        "triggerType": { "type": "string", "enum": ["VOICE", "TIME", "CHARGING", "WIFI", "APP_OPENED"], "description": "Trigger type" },
+        "triggerValue": { "type": "string", "description": "Trigger expression or phrase" },
+        "steps": { "type": "array", "description": "Ordered list of routine command steps" },
+        "isEnabled": { "type": "boolean", "description": "Whether routine is active" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp (FieldValue.serverTimestamp())" }
+      },
+      "required": ["name", "triggerType", "triggerValue", "steps", "isEnabled", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Owner profile document"
+    },
+    "/users/{userId}/memories/{memoryId}": {
+      "schema": { "$ref": "#/entities/MemoryItem" },
+      "description": "Owner long-term AI memories"
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/NoteItem" },
+      "description": "Owner notes"
+    },
+    "/users/{userId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/ExpenseItem" },
+      "description": "Owner expenses"
+    },
+    "/users/{userId}/todos/{todoId}": {
+      "schema": { "$ref": "#/entities/TodoItem" },
+      "description": "Owner todo and shopping items"
+    },
+    "/users/{userId}/routines/{routineId}": {
+      "schema": { "$ref": "#/entities/RoutineItem" },
+      "description": "Owner custom automation routines"
+    }
+  }
+}

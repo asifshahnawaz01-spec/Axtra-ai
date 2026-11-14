@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ایکسٹرا اے آئی</string>
+    <string name="app_tagline">آپ کا ذاتی اے آئی ساتھی</string>
+    <string name="accessibility_service_description">ایکسٹرا اے آئی صرف آپ کے حکم یا اسکرین اسسٹنٹ فعال ہونے پر اسکرین پڑھنے اور آپ کی مدد کے لیے خودکار اقدامات کرنے کے لیے Accessibility استعمال کرتی ہے۔</string>
+    <string name="notification_listener_label">ایکسٹرا نوٹیفکیشن ریڈر</string>
+    <string name="widget_description">ایکسٹرا اے آئی کے لیے فوری آواز بٹن اور آل ویز آن اسٹیٹس</string>
+    <string name="widget_mic_desc">ایکسٹرا سے بات کرنے کے لیے دبائیں</string>
+    <string name="widget_status_idle">بات کرنے کے لیے مائیک دبائیں</string>
+    <string name="widget_status_active">آل ویز آن فعال ہے</string>
+    <string name="shortcut_talk_short">ایکسٹرا سے بات</string>
+    <string name="shortcut_talk_long">ایکسٹرا اے آئی سے بات شروع کریں</string>
+    <string name="shortcut_always_on_short">آل ویز آن</string>
+    <string name="shortcut_always_on_long">ایکسٹرا آل ویز آن آن یا آف کریں</string>
+    <string name="tile_label">ایکسٹرا</string>
+    <string name="nav_home">ہوم</string>
+    <string name="nav_commands">کمانڈز</string>
+    <string name="nav_routines">روٹینز</string>
+    <string name="nav_history">ہسٹری</string>
+    <string name="nav_settings">سیٹنگز</string>
+    <string name="error_no_internet">انٹرنیٹ دستیاب نہیں ہے۔ آف لائن موڈ استعمال ہو رہا ہے۔</string>
+    <string name="error_quota_exceeded">جیمنائی مفت کوٹہ مکمل ہو گیا ہے۔ دوبارہ کوشش یا آف لائن کمانڈ استعمال ہو رہی ہے۔</string>
+    <string name="error_invalid_key">فائربیس AI کی تصدیق ناکام ہو گئی۔ سیٹنگز &gt; AI میں Test Gemini AI چیک کریں۔</string>
+    <string name="error_tts_missing">اردو آواز کا ڈیٹا موجود نہیں ہے۔ ڈاؤن لوڈ کرنے کے لیے دبائیں۔</string>
+    <string name="error_mic_busy">مائیکروفون کسی اور ایپ میں مصروف ہے۔ براہ کرم دوبارہ کوشش کریں۔</string>
+</resources>

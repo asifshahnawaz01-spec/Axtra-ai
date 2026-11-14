@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="talk_to_axtra"
+        android:enabled="true"
+        android:icon="@drawable/ic_mic_shortcut"
+        android:shortcutShortLabel="@string/shortcut_talk_short"
+        android:shortcutLongLabel="@string/shortcut_talk_long">
+        <intent
+            android:action="com.example.ACTION_TALK_TO_AXTRA"
+            android:targetPackage="com.aistudio.axtraai.mr7kxp"
+            android:targetClass="com.example.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="toggle_always_on"
+        android:enabled="true"
+        android:icon="@drawable/ic_bolt_shortcut"
+        android:shortcutShortLabel="@string/shortcut_always_on_short"
+        android:shortcutLongLabel="@string/shortcut_always_on_long">
+        <intent
+            android:action="com.example.ACTION_TOGGLE_ALWAYS_ON"
+            android:targetPackage="com.aistudio.axtraai.mr7kxp"
+            android:targetClass="com.example.MainActivity" />
+    </shortcut>
+</shortcuts>
